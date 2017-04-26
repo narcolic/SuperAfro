@@ -25,9 +25,10 @@ public class Level_System : MonoBehaviour
     {
         if (exp >= nextLevelExp())
         {
-            level += 1;
+            
             levelUpStats();
             exp = exp - (int)nextLevelExp();
+            level += 1;
             player.health = player.maxHealth;
             
         }

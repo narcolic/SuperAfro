@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 10edd5140c3e13c44b80ed6aa236210d
+timeCreated: 1492282050
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Ceviche One
+  fontNames:
+  - Ceviche One
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

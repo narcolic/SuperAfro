@@ -50,9 +50,9 @@ public class Player_EXP : MonoBehaviour
 
     private void drawFrame()
     {
-        framePosition.x = Screen.width*0.02f;
+        framePosition.x = Screen.width * 0.037f;
         framePosition.y = Screen.height - framePosition.height;
-        framePosition.width = Screen.width-Screen.width*0.04f;
+        framePosition.width = Screen.width - Screen.width * 0.075f;
         framePosition.height = Screen.height * 0.02f;
 
         GUI.DrawTexture(framePosition, frame);

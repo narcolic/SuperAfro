@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - boss1
+  - boss2
+  - boss3
+  - skill3
   layers:
   - Default
   - TransparentFX

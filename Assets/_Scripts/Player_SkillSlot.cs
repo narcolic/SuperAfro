@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Skill_Slot : MonoBehaviour {
+public class Player_Skill_Slot
+{
 
     public Player_SpecialAttack skill;
+    public Rect position;
     public KeyCode key;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void setKey(KeyCode keyCode)
+    {
+        if (skill != null)
+        {
+            skill.key = keyCode;
+        }
+    }
 }

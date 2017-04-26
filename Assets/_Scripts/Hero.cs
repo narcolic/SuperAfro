@@ -7,6 +7,9 @@ public class Hero : MonoBehaviour
     //public CharacterController controller;
 
     public GameObject opponent;
+    private GameObject burningGround;
+
+    private bool burningGroundSkillActive;
 
     public AnimationClip attack;
     public AnimationClip die;
@@ -17,8 +20,11 @@ public class Hero : MonoBehaviour
     public int damage;
     public int health;
     public int maxHealth;
+    private double maxHealth5Percent;
     private bool impacted;
     public bool inAction;
+    private float timer;
+    private float cooldown;
 
     public float range;
 
@@ -27,31 +33,34 @@ public class Hero : MonoBehaviour
 
     public bool specialAttack;
 
+    public bool iceBuff;
+    public bool fireBuff;
+    public bool windBuff;
+
     // Use this for initialization
     void Start()
     {
+        cooldown = 0.7f;
         anim = GetComponent<Animator>();
         health = maxHealth;
+        burningGround = GameObject.FindGameObjectWithTag("skill3");
+        burningGround.SetActive(false);
+        burningGroundSkillActive = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("Hero Health: " + health);
+        //Debug.Log("buffs " + iceBuff);
+        maxHealth5Percent = 0.05 * maxHealth;
         if (Input.GetKey(KeyCode.Space) && enemyInRange() && !specialAttack)
         {
-            //anim.Play(attack.name);
-            //Click_To_Move.atck = true;
-            //if (opponent != null)
-            //{
-            //    transform.LookAt(opponent.transform.position);
-            //}
             inAction = true;
         }
 
         if (inAction)
         {
-            if (attackFunction(0, 1, KeyCode.Space, null))
+            if (attackFunction(0, 1, KeyCode.Space, true))
             {
 
             }
@@ -60,32 +69,60 @@ public class Hero : MonoBehaviour
                 inAction = false;
             }
         }
-        dieAction();
-
-        //if (this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.8f)
-        //{
-        //    Click_To_Move.atck = false;
-        //    impacted = false;
-        //}
-
-        //dieAction();
-        //impact();
-    }
-
-    public bool attackFunction(int stunSeconds, double scaledDamage, KeyCode key, GameObject particleEffect)
-    {
-        if (Input.GetKey(key) && enemyInRange())
+        if (burningGroundSkillActive)
         {
-            anim.Play(attack.name);
-            Click_To_Move.atck = true;
-
-            if (opponent != null)
+            if (Time.time > timer)
             {
-                transform.LookAt(opponent.transform.position);
+                timer = Time.time + cooldown;
+                if (health > maxHealth5Percent)
+                {
+                    health -= (int)maxHealth5Percent;
+                }
+                else
+                {
+                    health = 1;
+                }
             }
         }
 
-        if (this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.8f)
+        dieAction();
+        //Debug.Log(this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
+    }
+
+    public bool attackFunction(int stunSeconds, double scaledDamage, KeyCode key, bool opponentBased)
+    {
+        if (opponentBased)
+        {
+            if (Input.GetKey(key) && enemyInRange())
+            {
+                anim.Play(attack.name);
+                Click_To_Move.atck = true;
+
+                if (opponent != null)
+                {
+                    transform.LookAt(opponent.transform.position);
+                }
+            }
+        }
+        else
+        {
+            if (Input.GetKey(key))
+            {
+                if (!burningGroundSkillActive)
+                {
+                    burningGround.SetActive(true);
+                    burningGroundSkillActive = true;
+                }
+                else
+                {
+                    burningGround.SetActive(false);
+                    burningGroundSkillActive = false;
+                }
+                Click_To_Move.atck = true;
+            }
+        }
+
+        if (this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f)
         {
             Click_To_Move.atck = false;
             impacted = false;
@@ -95,7 +132,7 @@ public class Hero : MonoBehaviour
             }
             return false;
         }
-        impact(stunSeconds, scaledDamage, particleEffect);
+        impact(stunSeconds, scaledDamage, opponentBased);
         return true;
     }
 
@@ -103,23 +140,22 @@ public class Hero : MonoBehaviour
     {
         Click_To_Move.atck = false;
         impacted = false;
-        anim.Stop();
+        //anim.Stop();
     }
 
-    void impact(int stunSeconds, double scaledDamage, GameObject particleEffect)
+    void impact(int stunSeconds, double scaledDamage, bool opponentBased)
     {
-        if (opponent != null && this.anim.GetCurrentAnimatorStateInfo(0).IsName(attack.name) && !impacted)
+        if ((!opponentBased || opponent != null) && this.anim.GetCurrentAnimatorStateInfo(0).IsName(attack.name) && !impacted)
         {
-            if (this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.45f && this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.8f)
+            if (this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.3f && this.anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.7f)
             {
                 countDown = outOfCombatTime + 2;
                 CancelInvoke("outOfCombatCountDown");
                 InvokeRepeating("outOfCombatCountDown", 0, 1);
-                opponent.GetComponent<Mob>().getHit((damage * scaledDamage));
-                opponent.GetComponent<Mob>().getStun(stunSeconds);
-                if (particleEffect != null)
+                if (opponentBased)
                 {
-                    Instantiate(particleEffect, new Vector3(opponent.transform.position.x, opponent.transform.position.y + 1.5f, opponent.transform.position.z), Quaternion.identity);
+                    opponent.GetComponent<Mob>().getHit((damage * scaledDamage));
+                    opponent.GetComponent<Mob>().getStun(stunSeconds);
                 }
                 impacted = true;
             }
@@ -180,9 +216,10 @@ public class Hero : MonoBehaviour
             if (started && !this.anim.GetCurrentAnimatorStateInfo(0).IsName(die.name))
             {
                 //Action when hero dies.
-                Debug.Log("You died!");
-                health = maxHealth;
 
+                Debug.Log("You died!");
+
+                health = maxHealth;
                 ended = true;
                 started = false;
                 Click_To_Move.die = false;

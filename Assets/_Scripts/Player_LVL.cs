@@ -16,10 +16,12 @@ public class Player_LVL : MonoBehaviour
 
     public int currentLevel;
     public int nextLevel;
+    private GUIStyle guiStyle;
 
     // Use this for initialization
     void Start()
     {
+        guiStyle = new GUIStyle();
     }
 
     // Update is called once per frame
@@ -45,8 +47,10 @@ public class Player_LVL : MonoBehaviour
 
         nextLevelArea = new Rect(nextLevelFramePosition.x + Screen.width * 0.01f, nextLevelFramePosition.y + Screen.height * 0.01f, nextLevelFramePosition.width, nextLevelFramePosition.height);
 
+        guiStyle.fontSize = 25;
+        guiStyle.normal.textColor = Color.white;
         GUI.DrawTexture(nextLevelFramePosition, nextLevelFrame);
-        GUI.Label(nextLevelArea, nextLevel.ToString());
+        GUI.Label(nextLevelArea, nextLevel.ToString(), guiStyle);
     }
 
     private void drawLevelFrame()
@@ -54,12 +58,14 @@ public class Player_LVL : MonoBehaviour
         framePosition.x = 0;
         framePosition.y = Screen.height - framePosition.height;
 
-        framePosition.width = Screen.width * 0.03f;
-        framePosition.height = Screen.height * 0.04f;
+        framePosition.width = Screen.width * 0.04f;
+        framePosition.height = Screen.height * 0.05f;
 
         levelArea = new Rect(framePosition.x + Screen.width * 0.01f, framePosition.y + Screen.height * 0.01f, framePosition.width, framePosition.height);
 
+        guiStyle.fontSize = 25;
+        guiStyle.normal.textColor = Color.white;
         GUI.DrawTexture(framePosition, frame);
-        GUI.Label(levelArea, currentLevel.ToString());
+        GUI.Label(levelArea, currentLevel.ToString(), guiStyle);
     }
 }

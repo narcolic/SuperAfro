@@ -23,8 +23,9 @@ public class Mob : MonoBehaviour
     public int damage;
     public int mobXP;
     private bool impacted;
+    private bool stun;
 
-    private int stunTime;
+    public int stunTime;
 
     public Level_System playerLvl;
 
@@ -109,7 +110,7 @@ public class Mob : MonoBehaviour
 
     public void getHit(double damage)
     {
-        health -=(int) damage;
+        health -= (int)damage;
         if (health < 0)
         {
             health = 0;
@@ -153,6 +154,19 @@ public class Mob : MonoBehaviour
             playerLvl.exp += mobXP;
             Destroy(gameObject);
         }
+        if (gameObject.tag == "boss1")
+        {
+            opponent.iceBuff = true;
+        }
+        if (gameObject.tag == "boss2")
+        {
+            opponent.fireBuff = true;
+        }
+        if (gameObject.tag == "boss3")
+        {
+            opponent.windBuff = true;
+        }
+
     }
 
     void mobAttack()
